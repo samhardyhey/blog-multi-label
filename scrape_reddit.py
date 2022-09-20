@@ -99,6 +99,25 @@ if __name__ == "__main__":
             )
         )
         .drop(labels=["created", "created_utc"], axis="columns", inplace=False)
+        .assign(
+            text=lambda x: x.apply(
+                lambda y: y.body if type(y.body) == str else y.title, axis=1
+            )
+        )
+        .pipe(
+            lambda x: x[["author", "id", "subreddit", "document_publish_date", "text"]]
+        )
+        .pipe(
+            lambda x: x[
+                ~x.text.isin(
+                    [
+                        "[removed]",
+                        "[deleted]",
+                        "Thank you",
+                    ]
+                )
+            ]
+        )
     )
     all_submissions_and_comments.to_csv(
         OUTPUT_DIR / "aus_finance_reddit.csv", index=False

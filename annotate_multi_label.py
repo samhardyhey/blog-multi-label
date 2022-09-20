@@ -6,6 +6,7 @@ from pathlib import Path
 import pandas as pd
 import yaml
 from clear_bow.classifier import DictionaryClassifier
+from wasabi import msg
 
 
 def binary_confirm_n_label_objects(
@@ -18,15 +19,21 @@ def binary_confirm_n_label_objects(
 ):
     # given a list of records, positively verify (binary confirmation) across a selected field until examples run out/quota reached. Return all annotations.
     updated_records = []
-    print(
-        f"Input an: '{accept_value}' to accept value, input {reject_value} to reject value. "
+    msg.info(
+        f"Input: '{accept_value}' to accept value, input {reject_value} to reject value. "
         + f"Label objects saved as '{label_col}' field within all records. "
         + f"Loop will break when '{n_examples}' positively affirmed or examples run out, whichever first. {df.shape[0]} candidates supplied.\n"
     )
     for idx, record in df.iterrows():
         # early break if n_examples exists
         if (
-            len([e for e in updated_records if e[label_col][label_object_key] == 1])
+            len(
+                [
+                    record
+                    for record in updated_records
+                    if record[label_col][label_object_key] == 1
+                ]
+            )
             >= n_examples
         ):
             return pd.DataFrame(updated_records)
@@ -45,21 +52,21 @@ def binary_confirm_n_label_objects(
 
 def consolidate_hard_soft_labels(label_objects):
     # defer to hard labels where they exist, otherwise average soft labels
-    label_objects = [e for e in label_objects if type(e) == dict]
-    set.union(*[set(e) for e in label_objects])
+    label_objects = [
+        object for object in label_objects if type(object) == dict]
 
     flattened_object = {}
     all_labels = pd.DataFrame(label_objects)
-    for e in all_labels:
+    for label in all_labels:
         # hard reject
-        if -1 in set(all_labels[e]):
-            flattened_object[e] = -1
+        if -1 in set(all_labels[label]):
+            flattened_object[label] = -1
         # hard accept
-        elif 1 in set(all_labels[e]):
-            flattened_object[e] = 1
+        elif 1 in set(all_labels[label]):
+            flattened_object[label] = 1
         # mean otherwise
         else:
-            flattened_object[e] = all_labels[e].mean()
+            flattened_object[label] = all_labels[label].mean()
 
     return flattened_object
 
@@ -67,11 +74,12 @@ def consolidate_hard_soft_labels(label_objects):
 def consolidate_doc_labels(df, label_col):
     label_objects = df[label_col].tolist()
 
-    if len([e for e in label_objects if type(e) == dict]) == 0:
+    if len([object for object in label_objects if type(object) == dict]) == 0:
         # NAN values - usually from concatenated, unseen records
         df[label_col] = [None] * df.shape[0]
     else:
-        df[label_col] = [consolidate_hard_soft_labels(label_objects)] * df.shape[0]
+        df[label_col] = [consolidate_hard_soft_labels(
+            label_objects)] * df.shape[0]
     return df.head(1)
 
 
@@ -88,7 +96,9 @@ def annotate_n_examples_per_class(
 ):
     # 1. label book-keeping - restrict against a pre-existing set of labels
     model_labels = [
-        e for e in model.predict_single("hello world").keys() if e != "no_label"
+        label
+        for label in model.predict_single("hello world").keys()
+        if label != "no_label"
     ]
     if specific_labels:
         # sanity check the specified labels against available model labels
@@ -97,9 +107,10 @@ def annotate_n_examples_per_class(
         )
         if not label_intersection:
             raise ValueError("No label intersection found, aborting sampling")
-        print(f"Specified: {sorted(specific_labels)}")
-        print(f"Model features: {sorted(model_labels)}")
-        print(f"Sampling using the intersecting labels only: {label_intersection}")
+        msg.info(f"Specified: {sorted(specific_labels)}")
+        msg.info(f"Model features: {sorted(model_labels)}")
+        msg.info(
+            f"Sampling using the intersecting labels only: {label_intersection}")
         pred_labels = label_intersection
     else:
         pred_labels = model_labels
@@ -118,32 +129,36 @@ def annotate_n_examples_per_class(
         # 3.1 consolidate old verifications with new predictions, defer to old verifications
         consolidated_labels = []
         for hard, soft in zip(
-            df[label_col].tolist(), df[text_col].apply(model.predict_single).tolist()
+            df[label_col].tolist(), df[text_col].apply(
+                model.predict_single).tolist()
         ):
             if type(hard) != dict:
                 # RE: iteratively appending datasets
                 consolidated_labels.append(soft)
             else:
-                consolidated_labels.append(consolidate_hard_soft_labels([hard, soft]))
+                consolidated_labels.append(
+                    consolidate_hard_soft_labels([hard, soft]))
         df[label_col] = consolidated_labels
     else:
         # 3.2 otherwise create new prediction
         df[label_col] = df[text_col].apply(model.predict_single)
 
     all_verifications = []
-    for e in pred_labels:
+    for label in pred_labels:
         # 4. only use unseen examples, if verification field exists
         seen_examples = None
         if label_col in df:
             seen_examples = df[
-                df[label_col].apply(lambda y: True if type(y[e]) == int else False)
+                df[label_col].apply(lambda y: True if type(
+                    y[label]) == int else False)
             ]
             unseen_examples = df[
-                ~df[label_col].apply(lambda y: True if type(y[e]) == int else False)
+                ~df[label_col].apply(lambda y: True if type(
+                    y[label]) == int else False)
             ]
             if seen_examples.shape[0] > 1:
-                print(
-                    f"{seen_examples.shape[0]} pre-existing, positive examples found for {e}"
+                msg.info(
+                    f"{seen_examples.shape[0]} pre-existing, positive examples found for {label}"
                 )
 
         # adjust n-examples to retrieve
@@ -160,7 +175,7 @@ def annotate_n_examples_per_class(
             .pipe(
                 lambda x: x[
                     x[label_col].apply(
-                        lambda y: True if y[e] >= prediction_thresh else False
+                        lambda y: True if y[label] >= prediction_thresh else False
                     )
                 ]
             )
@@ -171,26 +186,29 @@ def annotate_n_examples_per_class(
             annotate_input_temp = annotate_input_temp.reset_index(drop=True).pipe(
                 lambda x: x.iloc[
                     x[label_col]
-                    .apply(lambda x: x[e])
+                    .apply(lambda x: x[label])
                     .sort_values(ascending=False)
                     .index
                 ]
             )
         else:
             # 6.2 shuffle candidates otherwise
-            annotate_input_temp = annotate_input_temp.sample(frac=1.0, random_state=42)
+            annotate_input_temp = annotate_input_temp.sample(
+                frac=1.0, random_state=42)
 
         # 7. take the first n=max_candidate records
         annotate_input_temp = annotate_input_temp.head(max_candidates)
 
         # 8. actually annotate the filtered data..
         if annotate_input_temp.shape[0] == 0:
-            print(f"\n\n****\t No candidate examples found for: {e}, skipping\t****\n")
+            msg.warn(
+                f"\n\n****\t No candidate examples found for: {label}, skipping\t****\n"
+            )
             annotations = pd.DataFrame()
         else:
-            print(f"\n\n****\t Annotating: {e} \t****\n")
+            msg.info(f"\n\n****\t Annotating: {label} \t****\n")
             annotations = binary_confirm_n_label_objects(
-                annotate_input_temp, label_col, e, n_examples=adjusted_n_examples
+                annotate_input_temp, label_col, label, n_examples=adjusted_n_examples
             )
 
         # 9. consolidate alongside seen examples; grow pool of annotations
@@ -218,11 +236,14 @@ def backfill_multi_label_objects(
 
     # generally assume entire label space
     label_space_b = [
-        e for e in model.predict_single("hello world").keys() if e != "no_label"
+        label
+        for label in model.predict_single("hello world").keys()
+        if label != "no_label"
     ]
     if specific_labels:
         # optionally reduce label space to specific sub-set of existing labelspace
-        target_label_space = set(specific_labels).intersection(set(label_space_b))
+        target_label_space = set(
+            specific_labels).intersection(set(label_space_b))
     else:
         target_label_space = set(label_space_b)
 
@@ -231,14 +252,16 @@ def backfill_multi_label_objects(
 
     consolidated_labels = []
     for hard, soft in zip(
-        df[label_col].tolist(), df[text_col].apply(model.predict_single).tolist()
+        df[label_col].tolist(), df[text_col].apply(
+            model.predict_single).tolist()
     ):
         # using fresh predictions, consolidate label space
         if type(hard) != dict:
             # RE: iteratively appending datasets
             consolidated_labels.append(soft)
         else:
-            consolidated_labels.append(consolidate_hard_soft_labels([hard, soft]))
+            consolidated_labels.append(
+                consolidate_hard_soft_labels([hard, soft]))
 
     for label, (idx, label_object) in itertools.product(
         target_label_space, enumerate(consolidated_labels)
@@ -250,9 +273,10 @@ def backfill_multi_label_objects(
         elif label_object[label] >= prediction_thresh:
             # 3. otherwise, some difference in labels, as proposed by model
             os.system("clear")
-            print(f"**** Verifying all additional instances of: {label} ****")
-            print(f"\n\033[1mText: \033[0m \n{df.iloc[idx][text_col]}\n")
-            print(f"\033[1mInstance of {label}?\033[0m")
+            msg.info(
+                f"**** Verifying all additional instances of: {label} ****")
+            msg.text(f"\n\033[1mText: \033[0m \n{df.iloc[idx][text_col]}\n")
+            msg.text(f"\033[1mInstance of {label}?\033[0m")
             confirmation = input()
 
             if confirmation == "n":
@@ -293,7 +317,7 @@ if __name__ == "__main__":
 
     # 2. backfill across multi-label space
     annotations = backfill_multi_label_objects(
-        moel=dc,
+        model=dc,
         df=annotations,
         text_col=CONFIG["text_col"],
         label_col=CONFIG["label_col"],

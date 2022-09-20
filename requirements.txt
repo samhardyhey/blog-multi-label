@@ -1,12 +1,6 @@
-# generic
-clean-py==0.5
-tqdm==4.64.0
+clear_bow==0.2
 pandas==1.4.3
-
-# reddit scraping
 psaw==0.1.0
-
-# annotation
-clear-bow==0.2
-
-# model dev
+PyYAML==6.0
+tqdm==4.64.0
+wasabi==0.10.1

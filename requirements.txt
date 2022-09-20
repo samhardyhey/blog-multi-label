@@ -1,0 +1,12 @@
+# generic
+clean-py==0.5
+tqdm==4.64.0
+pandas==1.4.3
+
+# reddit scraping
+psaw==0.1.0
+
+# annotation
+clear-bow==0.2
+
+# model dev

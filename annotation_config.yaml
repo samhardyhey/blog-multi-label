@@ -4,13 +4,21 @@ text_col: "text"
 label_col: "label"
 output: "/Users/samhardyhey/Desktop/blog/blog-multi-label/output/aus_finance_reddit_annotated.csv"
 
+# preprocessing
+min_tokens: 5
+max_tokens: 50
+
 # classifier
 classifier_type: "multi_label"
 label_dictionary:
-  customer_service: ["customer service", "service", "experience"]
+  regulation: ["asic", "government", "federal", "tax"]
+  contribution: ["contribution", "concession", "personal", "after tax", "10%", "10.5%"]
+  covid: ["covid", "lockdown", "downturn", "effect"]
+  retirement: ["retire", "house", "annuity", "age"]
+  fund: ["unisuper", "aus super", "australian super", "sun super", "qsuper", "rest", "cbus"]
 
 # annotation
-n_examples: 2
+n_examples: 10
 prediction_threshold: 0.70
 rank_candidates: True
 max_candidates: 10

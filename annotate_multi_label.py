@@ -52,8 +52,7 @@ def binary_confirm_n_label_objects(
 
 def consolidate_hard_soft_labels(label_objects):
     # defer to hard labels where they exist, otherwise average soft labels
-    label_objects = [
-        object for object in label_objects if type(object) == dict]
+    label_objects = [object for object in label_objects if type(object) == dict]
 
     flattened_object = {}
     all_labels = pd.DataFrame(label_objects)
@@ -78,8 +77,7 @@ def consolidate_doc_labels(df, label_col):
         # NAN values - usually from concatenated, unseen records
         df[label_col] = [None] * df.shape[0]
     else:
-        df[label_col] = [consolidate_hard_soft_labels(
-            label_objects)] * df.shape[0]
+        df[label_col] = [consolidate_hard_soft_labels(label_objects)] * df.shape[0]
     return df.head(1)
 
 
@@ -109,8 +107,7 @@ def annotate_n_examples_per_class(
             raise ValueError("No label intersection found, aborting sampling")
         msg.info(f"Specified: {sorted(specific_labels)}")
         msg.info(f"Model features: {sorted(model_labels)}")
-        msg.info(
-            f"Sampling using the intersecting labels only: {label_intersection}")
+        msg.info(f"Sampling using the intersecting labels only: {label_intersection}")
         pred_labels = label_intersection
     else:
         pred_labels = model_labels
@@ -129,15 +126,13 @@ def annotate_n_examples_per_class(
         # 3.1 consolidate old verifications with new predictions, defer to old verifications
         consolidated_labels = []
         for hard, soft in zip(
-            df[label_col].tolist(), df[text_col].apply(
-                model.predict_single).tolist()
+            df[label_col].tolist(), df[text_col].apply(model.predict_single).tolist()
         ):
             if type(hard) != dict:
                 # RE: iteratively appending datasets
                 consolidated_labels.append(soft)
             else:
-                consolidated_labels.append(
-                    consolidate_hard_soft_labels([hard, soft]))
+                consolidated_labels.append(consolidate_hard_soft_labels([hard, soft]))
         df[label_col] = consolidated_labels
     else:
         # 3.2 otherwise create new prediction
@@ -149,12 +144,10 @@ def annotate_n_examples_per_class(
         seen_examples = None
         if label_col in df:
             seen_examples = df[
-                df[label_col].apply(lambda y: True if type(
-                    y[label]) == int else False)
+                df[label_col].apply(lambda y: True if type(y[label]) == int else False)
             ]
             unseen_examples = df[
-                ~df[label_col].apply(lambda y: True if type(
-                    y[label]) == int else False)
+                ~df[label_col].apply(lambda y: True if type(y[label]) == int else False)
             ]
             if seen_examples.shape[0] > 1:
                 msg.info(
@@ -193,8 +186,7 @@ def annotate_n_examples_per_class(
             )
         else:
             # 6.2 shuffle candidates otherwise
-            annotate_input_temp = annotate_input_temp.sample(
-                frac=1.0, random_state=42)
+            annotate_input_temp = annotate_input_temp.sample(frac=1.0, random_state=42)
 
         # 7. take the first n=max_candidate records
         annotate_input_temp = annotate_input_temp.head(max_candidates)
@@ -242,8 +234,7 @@ def backfill_multi_label_objects(
     ]
     if specific_labels:
         # optionally reduce label space to specific sub-set of existing labelspace
-        target_label_space = set(
-            specific_labels).intersection(set(label_space_b))
+        target_label_space = set(specific_labels).intersection(set(label_space_b))
     else:
         target_label_space = set(label_space_b)
 
@@ -252,16 +243,14 @@ def backfill_multi_label_objects(
 
     consolidated_labels = []
     for hard, soft in zip(
-        df[label_col].tolist(), df[text_col].apply(
-            model.predict_single).tolist()
+        df[label_col].tolist(), df[text_col].apply(model.predict_single).tolist()
     ):
         # using fresh predictions, consolidate label space
         if type(hard) != dict:
             # RE: iteratively appending datasets
             consolidated_labels.append(soft)
         else:
-            consolidated_labels.append(
-                consolidate_hard_soft_labels([hard, soft]))
+            consolidated_labels.append(consolidate_hard_soft_labels([hard, soft]))
 
     for label, (idx, label_object) in itertools.product(
         target_label_space, enumerate(consolidated_labels)
@@ -273,8 +262,7 @@ def backfill_multi_label_objects(
         elif label_object[label] >= prediction_thresh:
             # 3. otherwise, some difference in labels, as proposed by model
             os.system("clear")
-            msg.info(
-                f"**** Verifying all additional instances of: {label} ****")
+            msg.info(f"**** Verifying all additional instances of: {label} ****")
             msg.text(f"\n\033[1mText: \033[0m \n{df.iloc[idx][text_col]}\n")
             msg.text(f"\033[1mInstance of {label}?\033[0m")
             confirmation = input()
@@ -296,7 +284,23 @@ if __name__ == "__main__":
             "/Users/samhardyhey/Desktop/blog/blog-multi-label/annotation_config.yaml"
         ).read_bytes()
     )
-    df = pd.read_csv(CONFIG["dataset"])
+    df = (
+        pd.read_csv(CONFIG["dataset"])
+        .pipe(
+            lambda x: x[
+                x[CONFIG["text_col"]].apply(
+                    lambda y: len(y.split(" ")) > CONFIG["min_tokens"]
+                )
+            ]
+        )
+        .pipe(
+            lambda x: x[
+                x[CONFIG["text_col"]].apply(
+                    lambda y: len(y.split(" ")) < CONFIG["max_tokens"]
+                )
+            ]
+        )
+    )
 
     # 1. use a cheap, dictionary classifier to bootstrap initial, per-class annotations
     dc = DictionaryClassifier(

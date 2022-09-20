@@ -1,0 +1,19 @@
+# experiment
+dataset: "/Users/samhardyhey/Desktop/blog/blog-multi-label/output/aus_finance_reddit_annotated.csv"
+text_col: "text"
+label_col: "label"
+test_size: 0.25
+wandb_project: "tyre_kick"
+wandb_group: annotation_2
+
+models:
+  - model: dictionary_classifier
+    classifier_type: "multi_label"
+    label_dictionary:
+      regulation: ["asic", "government", "federal", "tax"]
+      contribution: ["contribution", "concession", "personal", "after tax", "10%", "10.5%"]
+      covid: ["covid", "lockdown", "downturn", "effect"]
+      retirement: ["retire", "house", "annuity", "age"]
+      fund: ["unisuper", "aus super", "australian super", "sun super", "qsuper", "rest", "cbus"]
+  - model: sklearn_svm
+  - model: flair_tars

@@ -5,7 +5,9 @@ import yaml
 
 import wandb
 from data_util import create_multi_label_train_test_splits, log_dataframe
-from model_util import fit_and_log_dictionary_classifier, fit_and_log_linear_svc
+from model.dictionary import fit_and_log_dictionary_classifier
+from model.flair_tars import fit_and_log_flair_tars_classifier
+from model.linear_svc import fit_and_log_linear_svc_classifier
 
 if __name__ == "__main__":
     CONFIG = yaml.safe_load(
@@ -38,7 +40,16 @@ if __name__ == "__main__":
             )
 
         elif model_config["type"] == "sklearn_linear_svc":
-            fit_and_log_linear_svc(
+            fit_and_log_linear_svc_classifier(
+                train_split=train_split,
+                dev_split=dev_split,
+                test_split=test_split,
+                CONFIG=CONFIG,
+                model_config=model_config,
+            )
+
+        if model_config["type"] == "flair_tars":
+            fit_and_log_flair_tars_classifier(
                 train_split=train_split,
                 dev_split=dev_split,
                 test_split=test_split,

@@ -22,7 +22,7 @@ if __name__ == "__main__":
         "ASX",
         "AustralianAccounting",
     ]
-    OUTPUT_DIR = Path("./output")
+    OUTPUT_DIR = Path("../output")
     shutil.rmtree((str(OUTPUT_DIR))) if OUTPUT_DIR.exists() else None
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 

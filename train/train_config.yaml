@@ -8,7 +8,7 @@ wandb_group: annotation_2
 wandb_entity: cool_stonebreaker
 
 models:
-  - model: dictionary_classifier
+  - type: dictionary_classifier
     classifier_type: "multi_label"
     label_dictionary:
       regulation: ["asic", "government", "federal", "tax"]
@@ -16,5 +16,5 @@ models:
       covid: ["covid", "lockdown", "downturn", "effect"]
       retirement: ["retire", "house", "annuity", "age"]
       fund: ["unisuper", "aus super", "australian super", "sun super", "qsuper", "rest", "cbus"]
-  - model: sklearn_linear_svc
-  - model: flair_tars
+  - type: sklearn_linear_svc
+  - type: flair_tars

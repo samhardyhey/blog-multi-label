@@ -5,6 +5,7 @@ label_col: "label"
 test_size: 0.25
 wandb_project: "tyre_kick"
 wandb_group: annotation_2
+wandb_entity: cool_stonebreaker
 
 models:
   - model: dictionary_classifier
@@ -15,5 +16,5 @@ models:
       covid: ["covid", "lockdown", "downturn", "effect"]
       retirement: ["retire", "house", "annuity", "age"]
       fund: ["unisuper", "aus super", "australian super", "sun super", "qsuper", "rest", "cbus"]
-  - model: sklearn_svm
+  - model: sklearn_linear_svc
   - model: flair_tars

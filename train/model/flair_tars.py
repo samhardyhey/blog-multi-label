@@ -2,21 +2,14 @@ import tempfile
 from pathlib import Path
 
 import pandas as pd
-import wandb
-from clear_bow.classifier import DictionaryClassifier
-from data_util import log_dataframe
-from eval_util import (create_classification_report,
-                       create_slim_classification_report,
-                       label_dictionary_to_label_mat)
 from flair.data import Corpus, Sentence
 from flair.models import TARSClassifier
 from flair.tokenization import SegtokTokenizer
 from flair.trainers import ModelTrainer
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.feature_selection import VarianceThreshold
-from sklearn.pipeline import Pipeline
-from sklearn.svm import LinearSVC
-from skmultilearn.problem_transform import BinaryRelevance
+
+import wandb
+from data_util import log_dataframe
+from eval_util import create_classification_report, create_slim_classification_report
 
 
 def create_flair_classification_sentence(text, label_object, label_type="class"):
@@ -30,9 +23,7 @@ def predict_flair_tars(text, flair_tars_model):
     sentence = Sentence(text)
     labels = flair_tars_model.get_current_label_dictionary().get_items()
     flair_tars_model.predict(sentence)
-    pred_dict = {
-        label: 0.0 for label in labels
-    }
+    pred_dict = {label: 0.0 for label in labels}
     for e in sentence.labels:
         label = e.to_dict()["value"]
         confidence = round(float(e.to_dict()["confidence"]), 2)
@@ -40,7 +31,9 @@ def predict_flair_tars(text, flair_tars_model):
     return pred_dict
 
 
-def fit_and_log_flair_tars_classifier(train_split, dev_split, test_split, CONFIG, model_config):
+def fit_and_log_flair_tars_classifier(
+    train_split, dev_split, test_split, CONFIG, model_config
+):
     with wandb.init(
         project=CONFIG["wandb_project"],
         name=model_config["type"],
@@ -49,7 +42,7 @@ def fit_and_log_flair_tars_classifier(train_split, dev_split, test_split, CONFIG
     ) as run:
         wandb.config.type = model_config["type"]
         wandb.config.group = CONFIG["wandb_group"]
-        label_type = model_config.get("label_type", 'multi_label_class')
+        label_type = model_config.get("label_type", "multi_label_class")
 
         train_dev = pd.concat([train_split, dev_split], sort=True)
         train_sents = (
@@ -99,12 +92,14 @@ def fit_and_log_flair_tars_classifier(train_split, dev_split, test_split, CONFIG
                 max_epochs=model_config.get("max_epochs", 10),
                 save_final_model=model_config.get("max_epochs", False),
             )
-            trainer.model.save(
-                Path(artefact_dir) / "final-model.pt", checkpoint=False)
+            trainer.model.save(Path(artefact_dir) / "final-model.pt", checkpoint=False)
 
         # predict/evaluate
-        test_preds = test_split.assign(pred=test_split[CONFIG["text_col"]].apply(
-            lambda y: predict_flair_tars(y, tars)))
+        test_preds = test_split.assign(
+            pred=test_split[CONFIG["text_col"]].apply(
+                lambda y: predict_flair_tars(y, tars)
+            )
+        )
 
         classification_report = create_classification_report(
             test_split, test_preds, CONFIG

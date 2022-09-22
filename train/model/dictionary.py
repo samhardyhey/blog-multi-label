@@ -1,3 +1,6 @@
+import json
+from pathlib import Path
+
 from clear_bow.classifier import DictionaryClassifier
 
 import wandb
@@ -13,12 +16,17 @@ def fit_and_log_dictionary_classifier(test_split, CONFIG, model_config):
         entity=CONFIG["wandb_entity"],
     ) as run:
         wandb.config.type = model_config["type"]
-        wandb.config.group = CONFIG["wandb_group"]
+        # wandb.config.group = CONFIG["wandb_group"]
 
         # instantiate
         dc = DictionaryClassifier(
             classifier_type=model_config["classifier_type"],
             label_dictionary=model_config["label_dictionary"],
+        )
+
+        # label dictionary as an artefact
+        (Path(run.dir) / "label_dictionary.json").write_text(
+            json.dumps(dc.label_dictionary)
         )
 
         # predict/evaluate

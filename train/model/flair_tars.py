@@ -1,4 +1,3 @@
-import tempfile
 from pathlib import Path
 
 import pandas as pd
@@ -41,20 +40,16 @@ def fit_and_log_flair_tars_classifier(
         entity=CONFIG["wandb_entity"],
     ) as run:
         wandb.config.type = model_config["type"]
-        wandb.config.group = CONFIG["wandb_group"]
+        # wandb.config.group = CONFIG["wandb_group"]
         label_type = model_config.get("label_type", "multi_label_class")
 
         train_dev = pd.concat([train_split, dev_split], sort=True)
-        train_sents = (
-            pd.concat([train_split, dev_split], sort=True)
-            .apply(
-                lambda x: create_flair_classification_sentence(
-                    x[CONFIG["text_col"]], x[CONFIG["label_col"]], label_type
-                ),
-                axis=1,
-            )
-            .tolist()
-        )
+        train_sents = train_dev.apply(
+            lambda x: create_flair_classification_sentence(
+                x[CONFIG["text_col"]], x[CONFIG["label_col"]], label_type
+            ),
+            axis=1,
+        ).tolist()
         test_sents = test_split.apply(
             lambda x: create_flair_classification_sentence(
                 x[CONFIG["text_col"]], x[CONFIG["label_col"]], label_type
@@ -80,19 +75,19 @@ def fit_and_log_flair_tars_classifier(
         trainer = ModelTrainer(tars, corpus)
 
         # 4. train model
-        with tempfile.TemporaryDirectory() as artefact_dir:
-            trainer.train(
-                base_path=artefact_dir,  # path to store the model artifacts
-                learning_rate=model_config.get(
-                    "learning_rate", 0.02
-                ),  # use very small learning rate
-                mini_batch_size=model_config.get(
-                    "mini_batch_size", 1
-                ),  # small mini-batch size since corpus is tiny
-                max_epochs=model_config.get("max_epochs", 10),
-                save_final_model=model_config.get("max_epochs", False),
-            )
-            trainer.model.save(Path(artefact_dir) / "final-model.pt", checkpoint=False)
+        trainer.train(
+            base_path=Path(run.dir),  # path to store the model artifacts
+            learning_rate=model_config.get(
+                "learning_rate", 0.02
+            ),  # use very small learning rate
+            mini_batch_size=model_config.get(
+                "mini_batch_size", 1
+            ),  # small mini-batch size since corpus is tiny
+            max_epochs=model_config.get("max_epochs", 10),
+            save_final_model=model_config.get("max_epochs", False),
+        )
+        # trainer.model.save(Path(run.dir) /
+        #                    "final-model.pt", checkpoint=False)
 
         # predict/evaluate
         test_preds = test_split.assign(
@@ -123,3 +118,5 @@ def fit_and_log_flair_tars_classifier(
         run.summary["test_support"] = classification_report.query(
             'label == "weighted avg"'
         )["support"].iloc[0]
+
+    return tars

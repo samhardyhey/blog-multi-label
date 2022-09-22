@@ -8,13 +8,16 @@ import wandb
 def label_dictionary_to_label_mat(label_dictionary_list, thresh=0.75):
     return (
         pd.DataFrame.from_records(list(label_dictionary_list))
+        .pipe(lambda x: x[sorted(x.columns)])
         .pipe(lambda x: x >= thresh)
         .astype(int)
     )
 
 
 def label_mat_to_label_dictionary(label_mat):
-    return list(label_mat.to_dict(orient="index").values())
+    return list(
+        label_mat.pipe(lambda x: x[sorted(x.columns)]).to_dict(orient="index").values()
+    )
 
 
 def create_multi_label_train_test_splits(

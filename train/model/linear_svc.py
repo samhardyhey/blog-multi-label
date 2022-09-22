@@ -1,4 +1,7 @@
+from pathlib import Path
+
 import pandas as pd
+from joblib import dump
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.feature_selection import VarianceThreshold
 from sklearn.pipeline import Pipeline
@@ -24,7 +27,7 @@ def fit_and_log_linear_svc_classifier(
         entity=CONFIG["wandb_entity"],
     ) as run:
         wandb.config.type = model_config["type"]
-        wandb.config.group = CONFIG["wandb_group"]
+        # wandb.config.group = CONFIG["wandb_group"]
 
         # define a basic pipeline
         pipeline = Pipeline(
@@ -41,13 +44,17 @@ def fit_and_log_linear_svc_classifier(
             train_dev[CONFIG["text_col"]],
             label_dictionary_to_label_mat(train_dev[CONFIG["label_col"]]),
         )
+        dump(pipeline, Path(run.dir) / "model.joblib")
 
         # predict/evaluate
         test_preds = test_split.assign(
             pred=[
                 dict(
                     zip(
-                        test_split.columns.values, pipeline.predict([e])[0].toarray()[0]
+                        label_dictionary_to_label_mat(
+                            test_split[CONFIG["label_col"]]
+                        ).columns.values,
+                        pipeline.predict([e])[0].toarray()[0],
                     )
                 )
                 for e in test_split[CONFIG["text_col"]].tolist()

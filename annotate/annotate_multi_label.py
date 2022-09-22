@@ -112,18 +112,8 @@ def annotate_n_examples_per_class(
     else:
         pred_labels = model_labels
 
-    # 2. drop duplicates on text field or consolidate labels, consolidate multi-document records
     if label_col in df:
-        df = (
-            df.groupby(text_col)
-            .apply(lambda x: consolidate_doc_labels(x, label_col))
-            .reset_index(drop=True)
-        )
-    else:
-        df = df.copy(deep=True).drop_duplicates(text_col)
-
-    if label_col in df:
-        # 3.1 consolidate old verifications with new predictions, defer to old verifications
+        # 3.1 consolidate old verifications with new predictions, defer to "hard" old predictions where they exist
         consolidated_labels = []
         for hard, soft in zip(
             df[label_col].tolist(), df[text_col].apply(model.predict_single).tolist()
@@ -151,10 +141,10 @@ def annotate_n_examples_per_class(
             ]
             if seen_examples.shape[0] > 1:
                 msg.info(
-                    f"{seen_examples.shape[0]} pre-existing, positive examples found for {label}"
+                    f"{seen_examples.shape[0]} pre-existing, positive examples found for label: '{label}'"
                 )
 
-        # adjust n-examples to retrieve
+        # reduce if necessary
         adjusted_n_examples = (
             n_examples - seen_examples.shape[0]
             if seen_examples.shape[0] > 0
@@ -162,7 +152,7 @@ def annotate_n_examples_per_class(
         )
 
         # 5. only annotate examples with relatively high confidence
-        annotate_input_temp = (
+        annotate_input = (
             unseen_examples
             # only examine examples above prediction threshold
             .pipe(
@@ -176,7 +166,7 @@ def annotate_n_examples_per_class(
 
         if rank_candidates:
             # 6.1 rank by prediction confidence
-            annotate_input_temp = annotate_input_temp.reset_index(drop=True).pipe(
+            annotate_input = annotate_input.reset_index(drop=True).pipe(
                 lambda x: x.iloc[
                     x[label_col]
                     .apply(lambda x: x[label])
@@ -186,13 +176,13 @@ def annotate_n_examples_per_class(
             )
         else:
             # 6.2 shuffle candidates otherwise
-            annotate_input_temp = annotate_input_temp.sample(frac=1.0, random_state=42)
+            annotate_input = annotate_input.sample(frac=1.0, random_state=42)
 
         # 7. take the first n=max_candidate records
-        annotate_input_temp = annotate_input_temp.head(max_candidates)
+        annotate_input = annotate_input.head(max_candidates)
 
         # 8. actually annotate the filtered data..
-        if annotate_input_temp.shape[0] == 0:
+        if annotate_input.shape[0] == 0:
             msg.warn(
                 f"\n\n****\t No candidate examples found for: {label}, skipping\t****\n"
             )
@@ -200,7 +190,7 @@ def annotate_n_examples_per_class(
         else:
             msg.info(f"\n\n****\t Annotating: {label} \t****\n")
             annotations = binary_confirm_n_label_objects(
-                annotate_input_temp, label_col, label, n_examples=adjusted_n_examples
+                annotate_input, label_col, label, n_examples=adjusted_n_examples
             )
 
         # 9. consolidate alongside seen examples; grow pool of annotations
@@ -219,11 +209,11 @@ def annotate_n_examples_per_class(
 
 
 def backfill_multi_label_objects(
-    model, df, text_col, label_col, specific_labels=None, prediction_thresh=0.75
+    model, df, text_col, label_col, focus_labels=None, prediction_thresh=0.75
 ):
     # Given an original set of labels/predictions (labels_a), verify and backfill complimentary model predictions (labels_b)
-    if specific_labels is None:
-        specific_labels = []
+    if focus_labels is None:
+        focus_labels = []
     df = df.copy(deep=True)
 
     # generally assume entire label space
@@ -232,9 +222,9 @@ def backfill_multi_label_objects(
         for label in model.predict_single("hello world").keys()
         if label != "no_label"
     ]
-    if specific_labels:
+    if focus_labels:
         # optionally reduce label space to specific sub-set of existing labelspace
-        target_label_space = set(specific_labels).intersection(set(label_space_b))
+        target_label_space = set(focus_labels).intersection(set(label_space_b))
     else:
         target_label_space = set(label_space_b)
 
@@ -283,7 +273,7 @@ if __name__ == "__main__":
         (Path(__file__).parents[0] / "annotation_config.yaml").read_bytes()
     )
     df = (
-        pd.read_csv(CONFIG["dataset"])
+        pd.read_csv(CONFIG["input_dataset"])
         .pipe(
             lambda x: x[
                 x[CONFIG["text_col"]].apply(
@@ -298,7 +288,12 @@ if __name__ == "__main__":
                 )
             ]
         )
+        .drop_duplicates(CONFIG["text_col"])
     )
+
+    if CONFIG["label_col"] in df:
+        # probably a pre-existing dataset
+        df[CONFIG["label_col"]] = df[CONFIG["label_col"]].apply(eval)
 
     # 1. use a cheap, dictionary classifier to bootstrap initial, per-class annotations
     dc = DictionaryClassifier(
@@ -326,4 +321,6 @@ if __name__ == "__main__":
         prediction_thresh=CONFIG["prediction_threshold"],
     )
 
-    annotations.to_csv(CONFIG["output"], index=False)
+    annotations.to_csv(
+        Path(CONFIG["output_dir"]) / f"{CONFIG['group']}.csv", index=False
+    )

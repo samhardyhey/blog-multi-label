@@ -71,9 +71,10 @@ if __name__ == "__main__":
     log_intra_group_model_comparisons(project_artifacts, CONFIG)
 
     # 4. update inter-group model comparisons
+    api = wandb.Api()  # refresh state of project?
     _ = [
         run.delete()
         for run in api.runs(path="cool_stonebreaker/tyre_kick")
-        if run.name == "inter_group_model_comparisons"
+        if run.name == "inter_group_model_comparison"
     ]
     log_inter_group_model_comparisons(project_artifacts, CONFIG)

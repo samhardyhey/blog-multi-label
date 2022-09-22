@@ -117,7 +117,7 @@ def log_intra_group_model_comparisons(project_artifacts, CONFIG):
         entity=CONFIG["wandb_entity"],
         job_type="aux_plot",
     ) as run:
-        wandb.log({f"{CONFIG['wandb_group']}_intra_model_comparison": fig})
+        run.log({f"{CONFIG['wandb_group']}_intra_model_comparison": fig})
 
 
 def get_most_performant_classifier_per_group(group):
@@ -173,4 +173,4 @@ def log_inter_group_model_comparisons(project_artifacts, CONFIG):
         entity=CONFIG["wandb_entity"],
         job_type="aux_plot",
     ) as run:
-        wandb.log({"inter_group_model_comparison": fig})
+        run.log({"inter_group_model_comparison": fig})

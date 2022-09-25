@@ -2,7 +2,6 @@ clear_bow==0.2
 flair==0.10
 gradio==3.3.1
 joblib==1.1.0
-numpy==1.22.0
 pandas==1.4.3
 psaw==0.1.0
 PyYAML==6.0
@@ -12,3 +11,5 @@ srsly==2.4.4
 tqdm==4.64.0
 wasabi==0.10.1
 wandb==0.13.3
+pandas==1.4.3
+srsly==2.4.4

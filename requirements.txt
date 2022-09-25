@@ -11,3 +11,4 @@ scikit_multilearn==0.2.0
 srsly==2.4.4
 tqdm==4.64.0
 wasabi==0.10.1
+wandb==0.13.3

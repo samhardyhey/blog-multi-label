@@ -9,7 +9,7 @@ echo "Installing project requirements"
 pip install -r ./requirements.txt
 
 echo "Installing torch/conda binaries"
-conda remove pytorch torchvision torchaudio -y # silly jarvis env
+conda remove pytorch torchvision torchaudio -y # silly runpod env
 conda install pytorch torchvision torchaudio -c pytorch -y
 
 echo "Testing torch installation"

@@ -1,0 +1,320 @@
+{
+    "_type": "table",
+    "column_types": {
+        "params": {
+            "type_map": {
+                "author": {
+                    "params": {
+                        "allowed_types": [
+                            {
+                                "wb_type": "none"
+                            },
+                            {
+                                "wb_type": "string"
+                            }
+                        ]
+                    },
+                    "wb_type": "union"
+                },
+                "document_publish_date": {
+                    "params": {
+                        "allowed_types": [
+                            {
+                                "wb_type": "none"
+                            },
+                            {
+                                "wb_type": "string"
+                            }
+                        ]
+                    },
+                    "wb_type": "union"
+                },
+                "id": {
+                    "params": {
+                        "allowed_types": [
+                            {
+                                "wb_type": "none"
+                            },
+                            {
+                                "wb_type": "string"
+                            }
+                        ]
+                    },
+                    "wb_type": "union"
+                },
+                "label": {
+                    "params": {
+                        "allowed_types": [
+                            {
+                                "wb_type": "none"
+                            },
+                            {
+                                "params": {
+                                    "type_map": {
+                                        "contribution": {
+                                            "wb_type": "number"
+                                        },
+                                        "covid": {
+                                            "wb_type": "number"
+                                        },
+                                        "fund": {
+                                            "wb_type": "number"
+                                        },
+                                        "regulation": {
+                                            "wb_type": "number"
+                                        },
+                                        "retirement": {
+                                            "wb_type": "number"
+                                        }
+                                    }
+                                },
+                                "wb_type": "typedDict"
+                            }
+                        ]
+                    },
+                    "wb_type": "union"
+                },
+                "pred": {
+                    "params": {
+                        "allowed_types": [
+                            {
+                                "wb_type": "none"
+                            },
+                            {
+                                "params": {
+                                    "type_map": {
+                                        "contribution": {
+                                            "wb_type": "number"
+                                        },
+                                        "covid": {
+                                            "wb_type": "number"
+                                        },
+                                        "fund": {
+                                            "wb_type": "number"
+                                        },
+                                        "regulation": {
+                                            "wb_type": "number"
+                                        },
+                                        "retirement": {
+                                            "wb_type": "number"
+                                        }
+                                    }
+                                },
+                                "wb_type": "typedDict"
+                            }
+                        ]
+                    },
+                    "wb_type": "union"
+                },
+                "subreddit": {
+                    "params": {
+                        "allowed_types": [
+                            {
+                                "wb_type": "none"
+                            },
+                            {
+                                "wb_type": "string"
+                            }
+                        ]
+                    },
+                    "wb_type": "union"
+                },
+                "text": {
+                    "params": {
+                        "allowed_types": [
+                            {
+                                "wb_type": "none"
+                            },
+                            {
+                                "wb_type": "string"
+                            }
+                        ]
+                    },
+                    "wb_type": "union"
+                }
+            }
+        },
+        "wb_type": "typedDict"
+    },
+    "columns": [
+        "author",
+        "id",
+        "subreddit",
+        "document_publish_date",
+        "text",
+        "label",
+        "pred"
+    ],
+    "data": [
+        [
+            "Markma1989",
+            "iolvdmk",
+            "fiaustralia",
+            "2022-09-16 01:08:37",
+            "Is the retire age 67 ? I always thought it\u2019s 60",
+            {
+                "contribution": 0,
+                "covid": 0,
+                "fund": 0,
+                "regulation": 0,
+                "retirement": 1
+            },
+            {
+                "contribution": 0.5,
+                "covid": 0.5,
+                "fund": 0.5,
+                "regulation": 0.5,
+                "retirement": 0.8808
+            }
+        ],
+        [
+            "AnnonymousBloke",
+            "ioqei1o",
+            "fiaustralia",
+            "2022-09-16 23:46:19",
+            "I didn\u2019t recall getting any email like this from CMC so went digging on their website.\n\nFound un updated FSG effective from 10 October 2022 which includes theirs fees.  Still free &lt; $1,000.  See page 4 here:\n\nhttps://assets.cmcmarkets.com/legal-documents/en-au/CMC_STB_FSG-10-10-22.pdf?_ga=2.184033382.1328792351.1663371761-715461570.1663247417",
+            {
+                "contribution": 0,
+                "covid": 1,
+                "fund": 0,
+                "regulation": 0,
+                "retirement": 1
+            },
+            {
+                "contribution": 0.5,
+                "covid": 0.7311,
+                "fund": 0.5,
+                "regulation": 0.5,
+                "retirement": 0.7311
+            }
+        ],
+        [
+            "sgslinga",
+            "inb1ip8",
+            "AusEcon",
+            "2022-09-06 12:35:43",
+            "Interesting. So increase in wages due to shortages? Have I understood that right? That will obviously put more money into the system and inflation will increase as a result. The hike should counteract the whole thing but wage increases should slow that down.",
+            {
+                "contribution": 0,
+                "covid": 0,
+                "fund": 1,
+                "regulation": 0,
+                "retirement": 1
+            },
+            {
+                "contribution": 0.5,
+                "covid": 0.5,
+                "fund": 0.7311,
+                "regulation": 0.5,
+                "retirement": 0.7311
+            }
+        ],
+        [
+            "manabeins",
+            "iodvecj",
+            "AusEcon",
+            "2022-09-14 11:57:51",
+            "Yes, but the median house price has increased exponentially. For an average mortgage of 650000 a 10% would mean 65k a year. It\u2019s not sustainable",
+            {
+                "contribution": 1,
+                "covid": 0,
+                "fund": 0,
+                "regulation": 0,
+                "retirement": 1
+            },
+            {
+                "contribution": 0.7311,
+                "covid": 0.5,
+                "fund": 0.5,
+                "regulation": 0.5,
+                "retirement": 0.8808
+            }
+        ],
+        [
+            "dayofdefeat_",
+            "iovj84c",
+            "AusProperty",
+            "2022-09-18 02:21:43",
+            "Ok live with your parents then. Fuck mate I don't determine the interest rates in Australia. You sound like a victim.",
+            {
+                "contribution": 0,
+                "covid": 0,
+                "fund": 1,
+                "regulation": 0,
+                "retirement": 0
+            },
+            {
+                "contribution": 0.5,
+                "covid": 0.5,
+                "fund": 0.7311,
+                "regulation": 0.5,
+                "retirement": 0.5
+            }
+        ],
+        [
+            "ddman9998",
+            "in4pzcv",
+            "AusEcon",
+            "2022-09-05 01:41:29",
+            "Since there are other taxes that are regressive, this isn't progressive enough.",
+            {
+                "contribution": 0,
+                "covid": 0,
+                "fund": 0,
+                "regulation": 1,
+                "retirement": 0
+            },
+            {
+                "contribution": 0.5,
+                "covid": 0.5,
+                "fund": 0.5,
+                "regulation": 0.7311,
+                "retirement": 0.5
+            }
+        ],
+        [
+            "veskoni",
+            "ioe8uhm",
+            "AusPropertyChat",
+            "2022-09-14 13:42:23",
+            "But you only pay the Qld land proportion, so not exactly double taxation. \n\nIf you have 2 jobs, your taxable income is the sum of both salaries, right? I guess same can be applied to land tax.",
+            {
+                "contribution": 0,
+                "covid": 0,
+                "fund": 0,
+                "regulation": 1,
+                "retirement": 0
+            },
+            {
+                "contribution": 0.5,
+                "covid": 0.5,
+                "fund": 0.5,
+                "regulation": 0.7311,
+                "retirement": 0.5
+            }
+        ],
+        [
+            "AwakE432",
+            "iozzrx0",
+            "fiaustralia",
+            "2022-09-19 00:06:36",
+            "Why do you give a shit about what other peoples options are about wfh? You have an opinion and others have a different opinion. No right it wrong it\u2019s personal preference.",
+            {
+                "contribution": 1,
+                "covid": 0,
+                "fund": 0,
+                "regulation": 0,
+                "retirement": 0
+            },
+            {
+                "contribution": 0.7311,
+                "covid": 0.5,
+                "fund": 0.5,
+                "regulation": 0.5,
+                "retirement": 0.5
+            }
+        ]
+    ],
+    "ncols": 7,
+    "nrows": 8
+}

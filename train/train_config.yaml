@@ -1,15 +1,15 @@
 # experiment
-# dataset: "/root/blog-multi-label/output/annotation_1.csv"
-dataset: "/Users/samhardyhey/Desktop/blog/blog-multi-label/output/annotation_1.csv"
+dataset: "/root/blog-multi-label/output/annotation_1.csv"
+# dataset: "/Users/samhardyhey/Desktop/blog/blog-multi-label/output/annotation_1.csv"
 text_col: "text"
 label_col: "label"
 test_size: 0.25
 wandb_project: "tyre_kick"
-wandb_group: annotation_1
-wandb_entity: cool_stonebreaker
+wandb_group: "annotation_1"
+wandb_entity: "cool_stonebreaker"
 
 models:
-  - type: dictionary_classifier
+  - type: "dictionary_classifier"
     classifier_type: "multi_label"
     label_dictionary:
       workplace: ['WFH', 'boss', 'co-workers', 'culture', 'hybrid', 'life balance', 'office']
@@ -22,8 +22,8 @@ models:
       exchange: ['dollar', 'exchange', 'rate']
       stocks: ['200', 'assets', 'asx', 'buy', 'commsec', 'dip', 'dividends', 'etf', 'high growth', 'indexed', 'invest', 'return', 'securities', 'selfwealth', 'shares', 'stock', 'van guard', 'vdhg', 'wealth']
       toxic: ['bro', 'butt', 'fool', 'fuck', 'laughable', 'lol', 'salty', 'shit', 'tard']
-  - type: sklearn_linear_svc
-  - type: flair_tars
+  - type: "sklearn_linear_svc"
+  - type: "flair_tars"
     learning_rate: 0.02
     mini_batch_size: 1
     max_epochs: 1

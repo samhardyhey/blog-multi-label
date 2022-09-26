@@ -1,18 +1,16 @@
 from pathlib import Path
 
 import pandas as pd
+import wandb
 import yaml
 
-import wandb
 from data_util import create_multi_label_train_test_splits, log_dataframe
-from eval_util import (
-    list_all_project_artifacts,
-    log_inter_group_model_comparisons,
-    log_intra_group_model_comparisons,
-)
+from eval_util import (list_all_project_artifacts,
+                       log_inter_group_model_comparisons,
+                       log_intra_group_model_comparisons)
 from model.dictionary import fit_and_log_dictionary_classifier
 from model.flair_tars import fit_and_log_flair_tars_classifier
-from train.model.sklearn_linear_svc import fit_and_log_sklearn_linear_svc_classifier
+from model.sklearn_linear_svc import fit_and_log_sklearn_linear_svc_classifier
 
 if __name__ == "__main__":
     api = wandb.Api()
@@ -50,7 +48,7 @@ if __name__ == "__main__":
                 model_config=model_config,
             )
 
-        if model_config["type"] == "flair_tars":
+        elif model_config["type"] == "flair_tars":
             fit_and_log_flair_tars_classifier(
                 train_split=train_split,
                 dev_split=dev_split,
@@ -70,7 +68,7 @@ if __name__ == "__main__":
     api = wandb.Api()  # refresh state of project?
     _ = [
         run.delete()
-        for run in api.runs(path="cool_stonebreaker/tyre_kick")
+        for run in api.runs(path=f"{CONFIG['wandb_entity']}/{CONFIG['wandb_project']}")
         if run.name == "inter_group_model_comparison"
     ]
     log_inter_group_model_comparisons(project_artifacts, CONFIG)

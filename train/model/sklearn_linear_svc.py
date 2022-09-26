@@ -1,6 +1,11 @@
 from pathlib import Path
 
 import pandas as pd
+import wandb
+from data_util import log_dataframe
+from eval_util import (create_classification_report,
+                       create_slim_classification_report,
+                       label_dictionary_to_label_mat)
 from joblib import dump
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.feature_selection import VarianceThreshold
@@ -8,16 +13,8 @@ from sklearn.pipeline import Pipeline
 from sklearn.svm import LinearSVC
 from skmultilearn.problem_transform import BinaryRelevance
 
-import wandb
-from data_util import log_dataframe
-from eval_util import (
-    create_classification_report,
-    create_slim_classification_report,
-    label_dictionary_to_label_mat,
-)
 
-
-def fit_and_log_linear_svc_classifier(
+def fit_and_log_sklearn_linear_svc_classifier(
     train_split, dev_split, test_split, CONFIG, model_config
 ):
     with wandb.init(

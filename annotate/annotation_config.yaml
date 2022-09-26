@@ -1,5 +1,5 @@
 # data
-input_dataset: "/root/blog-multi-label/output/aus_finance_reddit.csv"
+input_dataset: "/root/blog-multi-label/output/reddit_aus_finance.csv"
 text_col: "text"
 label_col: "label"
 group: "annotation_1"

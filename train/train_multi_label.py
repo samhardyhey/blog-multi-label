@@ -12,13 +12,11 @@ from eval_util import (
 )
 from model.dictionary import fit_and_log_dictionary_classifier
 from model.flair_tars import fit_and_log_flair_tars_classifier
-from model.linear_svc import fit_and_log_linear_svc_classifier
+from train.model.sklearn_linear_svc import fit_and_log_sklearn_linear_svc_classifier
 
 if __name__ == "__main__":
     api = wandb.Api()
-    CONFIG = yaml.safe_load(
-        (Path(__file__).parents[0] / "train_config.yaml").read_bytes()
-    )
+    CONFIG = yaml.safe_load((Path(__file__).parents[0] / "train_config.yaml").read_bytes())
 
     # 1. create/log splits
     df = pd.read_csv(CONFIG["dataset"])
@@ -41,12 +39,10 @@ if __name__ == "__main__":
     # 2. train/log a selection of models
     for model_config in CONFIG["models"]:
         if model_config["type"] == "dictionary_classifier":
-            fit_and_log_dictionary_classifier(
-                test_split=test_split, CONFIG=CONFIG, model_config=model_config
-            )
+            fit_and_log_dictionary_classifier(test_split=test_split, CONFIG=CONFIG, model_config=model_config)
 
         elif model_config["type"] == "sklearn_linear_svc":
-            fit_and_log_linear_svc_classifier(
+            fit_and_log_sklearn_linear_svc_classifier(
                 train_split=train_split,
                 dev_split=dev_split,
                 test_split=test_split,

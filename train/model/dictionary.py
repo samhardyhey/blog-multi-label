@@ -1,11 +1,11 @@
 import json
 from pathlib import Path
 
-import wandb
 from clear_bow.classifier import DictionaryClassifier
+
+import wandb
 from data_util import log_dataframe
-from eval_util import (create_classification_report,
-                       create_slim_classification_report)
+from eval_util import create_classification_report, create_slim_classification_report
 
 
 def fit_and_log_dictionary_classifier(test_split, CONFIG, model_config):

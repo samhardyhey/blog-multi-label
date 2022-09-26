@@ -1,13 +1,15 @@
 from pathlib import Path
 
 import pandas as pd
-import wandb
 import yaml
 
+import wandb
 from data_util import create_multi_label_train_test_splits, log_dataframe
-from eval_util import (list_all_project_artifacts,
-                       log_inter_group_model_comparisons,
-                       log_intra_group_model_comparisons)
+from eval_util import (
+    list_all_project_artifacts,
+    log_inter_group_model_comparisons,
+    log_intra_group_model_comparisons,
+)
 from model.dictionary import fit_and_log_dictionary_classifier
 from model.flair_tars import fit_and_log_flair_tars_classifier
 from model.linear_svc import fit_and_log_linear_svc_classifier

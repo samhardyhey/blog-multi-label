@@ -1,23 +1,26 @@
 import tempfile
+import warnings
 from pathlib import Path
 
 import pandas as pd
 import plotly.express as px
 import srsly
+import wandb
 from sklearn.metrics import classification_report
 
-import wandb
 from data_util import label_dictionary_to_label_mat
 
 
 def create_classification_report(test_split, test_preds, CONFIG):
     label_names = label_dictionary_to_label_mat(test_preds.pred).columns.tolist()
-    class_report_dict = classification_report(
-        label_dictionary_to_label_mat(test_split[CONFIG["label_col"]]),
-        label_dictionary_to_label_mat(test_preds.pred),
-        target_names=label_names,
-        output_dict=True,
-    )
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        class_report_dict = classification_report(
+            label_dictionary_to_label_mat(test_split[CONFIG["label_col"]]),
+            label_dictionary_to_label_mat(test_preds.pred),
+            target_names=label_names,
+            output_dict=True,
+        )
     return (
         pd.DataFrame(class_report_dict)
         .T.reset_index()

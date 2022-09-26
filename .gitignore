@@ -1,6 +1,6 @@
+deploy/*
 artifacts/
 wandb/
-output/
 .vscode/
 *.venv/
 __pycache__/

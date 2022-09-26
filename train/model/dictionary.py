@@ -1,11 +1,11 @@
 import json
 from pathlib import Path
 
-from clear_bow.classifier import DictionaryClassifier
-
 import wandb
+from clear_bow.classifier import DictionaryClassifier
 from data_util import log_dataframe
-from eval_util import create_classification_report, create_slim_classification_report
+from eval_util import (create_classification_report,
+                       create_slim_classification_report)
 
 
 def fit_and_log_dictionary_classifier(test_split, CONFIG, model_config):
@@ -16,7 +16,6 @@ def fit_and_log_dictionary_classifier(test_split, CONFIG, model_config):
         entity=CONFIG["wandb_entity"],
     ) as run:
         wandb.config.type = model_config["type"]
-        # wandb.config.group = CONFIG["wandb_group"]
 
         # instantiate
         dc = DictionaryClassifier(

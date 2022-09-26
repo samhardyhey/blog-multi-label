@@ -1,14 +1,14 @@
 from pathlib import Path
 
 import pandas as pd
+import wandb
+from data_util import log_dataframe
+from eval_util import (create_classification_report,
+                       create_slim_classification_report)
 from flair.data import Corpus, Sentence
 from flair.models import TARSClassifier
 from flair.tokenization import SegtokTokenizer
 from flair.trainers import ModelTrainer
-
-import wandb
-from data_util import log_dataframe
-from eval_util import create_classification_report, create_slim_classification_report
 
 
 def create_flair_classification_sentence(text, label_object, label_type="class"):
@@ -40,7 +40,6 @@ def fit_and_log_flair_tars_classifier(
         entity=CONFIG["wandb_entity"],
     ) as run:
         wandb.config.type = model_config["type"]
-        # wandb.config.group = CONFIG["wandb_group"]
         label_type = model_config.get("label_type", "multi_label_class")
 
         train_dev = pd.concat([train_split, dev_split], sort=True)
@@ -86,8 +85,8 @@ def fit_and_log_flair_tars_classifier(
             max_epochs=model_config.get("max_epochs", 10),
             save_final_model=model_config.get("max_epochs", False),
         )
-        # trainer.model.save(Path(run.dir) /
-        #                    "final-model.pt", checkpoint=False)
+        trainer.model.save(Path(run.dir) /
+                           "final-model.pt", checkpoint=False)
 
         # predict/evaluate
         test_preds = test_split.assign(

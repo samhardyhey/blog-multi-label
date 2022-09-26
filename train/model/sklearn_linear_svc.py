@@ -40,6 +40,9 @@ def fit_and_log_sklearn_linear_svc_classifier(
             train_dev[CONFIG["text_col"]],
             label_dictionary_to_label_mat(train_dev[CONFIG["label_col"]]),
         )
+        pipeline.multi_label_classes_ = label_dictionary_to_label_mat(
+            test_split[CONFIG["label_col"]]
+        ).columns.values
         dump(pipeline, Path(run.dir) / "model.joblib")
 
         # predict/evaluate

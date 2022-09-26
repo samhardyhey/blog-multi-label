@@ -1,9 +1,10 @@
 # data
-input_dataset: "/root/blog-multi-label/output/reddit_aus_finance.csv"
+input_dataset: "/Users/samhardyhey/Desktop/blog/blog-multi-label/output/reddit_aus_finance.csv"
+# input_dataset: "/root/blog-multi-label/output/reddit_aus_finance.csv"
 text_col: "text"
 label_col: "label"
 group: "annotation_1"
-output_dir: "/root/blog-multi-label/output"
+output_dir: "/Users/samhardyhey/Desktop/blog/blog-multi-label/output"
 
 # preprocessing
 min_tokens: 5

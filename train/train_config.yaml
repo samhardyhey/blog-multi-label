@@ -1,5 +1,6 @@
 # experiment
-dataset: "/root/blog-multi-label/output/annotation_1.csv"
+# dataset: "/root/blog-multi-label/output/annotation_1.csv"
+dataset: "/Users/samhardyhey/Desktop/blog/blog-multi-label/output/annotation_1.csv"
 text_col: "text"
 label_col: "label"
 test_size: 0.25

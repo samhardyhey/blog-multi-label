@@ -7,7 +7,6 @@ from wasabi import msg
 import wandb
 from eval_util import list_all_project_artifacts
 
-OUTPUT_BASE_DIR = "../deploy/model_files"
 ANNOTATION_GROUP = "annotation_1"
 
 if __name__ == "__main__":
@@ -18,7 +17,7 @@ if __name__ == "__main__":
 
     # get run ID's via artifacts
     project_artifacts = list_all_project_artifacts(api, CONFIG)
-    output_dir_base = Path(OUTPUT_BASE_DIR)
+    output_base_dir = (Path(__file__).parents[1] / "deploy/model_files")
     run_records = project_artifacts.query("group == @ANNOTATION_GROUP").drop_duplicates(
         "type"
     )
@@ -27,7 +26,7 @@ if __name__ == "__main__":
         # save each model's binaries/config
         if record.type == "flair_tars":
             msg.info("Saving flair_tars model files..")
-            output_dir = output_dir_base / "flair_tars"
+            output_dir = output_base_dir / "flair_tars"
             if output_dir.exists():
                 shutil.rmtree(str(output_dir))
             output_dir.mkdir(parents=True, exist_ok=True)
@@ -40,7 +39,7 @@ if __name__ == "__main__":
 
         elif record.type == "sklearn_linear_svc":
             msg.info("Saving sklearn_linear_svc model files..")
-            output_dir = output_dir_base / "sklearn_linear_svc"
+            output_dir = output_base_dir / "sklearn_linear_svc"
             if output_dir.exists():
                 shutil.rmtree(str(output_dir))
             output_dir.mkdir(parents=True, exist_ok=True)
@@ -53,7 +52,7 @@ if __name__ == "__main__":
 
         elif record.type == "dictionary_classifier":
             msg.info("Saving dictionary_classifier model files..")
-            output_dir = output_dir_base / "dictionary_classifier"
+            output_dir = output_base_dir / "dictionary_classifier"
             if output_dir.exists():
                 shutil.rmtree(str(output_dir))
             output_dir.mkdir(parents=True, exist_ok=True)

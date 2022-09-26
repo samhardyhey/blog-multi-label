@@ -4,37 +4,28 @@ from datetime import datetime, timedelta
 from pathlib import Path
 
 import pandas as pd
+import yaml
 from psaw import PushshiftAPI
 from tqdm import tqdm
 
 if __name__ == "__main__":
-    TOTAL_SUBMISSION_LIMIT = 250
-    DAY_DELTA = 60
-    SUBREDDITS = [
-        "fiaustralia",
-        "ASX_Bets",
-        "ausstocks",
-        "AusProperty",
-        "AusFinance",
-        "ausstocks",
-        "AusEcon",
-        "AusPropertyChat",
-        "ASX",
-        "AustralianAccounting",
-    ]
-    OUTPUT_DIR = Path("../output")
-    shutil.rmtree((str(OUTPUT_DIR))) if OUTPUT_DIR.exists() else None
-    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+    CONFIG = yaml.safe_load(
+        (Path(__file__).parents[0] / "scrape_config.yaml").read_bytes())
+    output_dir = (Path(__file__).parents[0] / "output")
+    shutil.rmtree((str(output_dir))) if output_dir.exists() else None
+    output_dir.mkdir(parents=True, exist_ok=True)
 
     pushshift_client = PushshiftAPI()
-    last_month_start_epoch = int((datetime.now() - timedelta(days=DAY_DELTA)).timestamp())
+    last_month_start_epoch = int(
+        (datetime.now() - timedelta(days=CONFIG['day_delta'])).timestamp())
     reddit_query = ""
-    per_subreddit_limit = math.ceil(TOTAL_SUBMISSION_LIMIT / len(SUBREDDITS))
+    per_subreddit_limit = math.ceil(
+        CONFIG['total_submission_limit'] / len(CONFIG['subreddits']))
 
     # 1. retrieve submissions
     all_subreddit_submissions = []
     for subreddit in tqdm(
-        SUBREDDITS,
+        CONFIG['subreddits'],
         desc=f"Collecting {per_subreddit_limit} submissions for each subreddit..",
     ):
         submission_raw = list(
@@ -84,7 +75,8 @@ if __name__ == "__main__":
         )
         comments_formatted = pd.DataFrame([e.d_ for e in comments_raw])
 
-        submissions_and_comments.append(pd.concat([record.to_frame().transpose(), comments_formatted], sort=True))
+        submissions_and_comments.append(
+            pd.concat([record.to_frame().transpose(), comments_formatted], sort=True))
 
     # 3. format/save
     all_submissions_and_comments = (
@@ -105,4 +97,5 @@ if __name__ == "__main__":
             ]
         )
     )
-    all_submissions_and_comments.to_csv(OUTPUT_DIR / "reddit_aus_finance.csv", index=False)
+    all_submissions_and_comments.to_csv(
+        output_dir / "reddit_aus_finance.csv", index=False)

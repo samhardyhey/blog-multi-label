@@ -3,6 +3,7 @@ from pathlib import Path
 import pandas as pd
 import wandb
 import yaml
+from wasabi import msg
 
 from data_util import create_multi_label_train_test_splits, log_dataframe
 from eval_util import (list_all_project_artifacts,
@@ -14,7 +15,9 @@ from model.sklearn_linear_svc import fit_and_log_sklearn_linear_svc_classifier
 
 if __name__ == "__main__":
     api = wandb.Api()
-    CONFIG = yaml.safe_load((Path(__file__).parents[0] / "train_config.yaml").read_bytes())
+    CONFIG = yaml.safe_load(
+        (Path(__file__).parents[0] / "train_config.yaml").read_bytes()
+    )
 
     # 1. create/log splits
     df = pd.read_csv(CONFIG["dataset"])
@@ -37,7 +40,9 @@ if __name__ == "__main__":
     # 2. train/log a selection of models
     for model_config in CONFIG["models"]:
         if model_config["type"] == "dictionary_classifier":
-            fit_and_log_dictionary_classifier(test_split=test_split, CONFIG=CONFIG, model_config=model_config)
+            fit_and_log_dictionary_classifier(
+                test_split=test_split, CONFIG=CONFIG, model_config=model_config
+            )
 
         elif model_config["type"] == "sklearn_linear_svc":
             fit_and_log_sklearn_linear_svc_classifier(
@@ -58,7 +63,7 @@ if __name__ == "__main__":
             )
 
         else:
-            print(f"Unsupported model: {model_config['type']} found")
+            msg.warn(f"Unsupported model: {model_config['type']} found")
 
     # 3. log intra-model comparisons for current group
     project_artifacts = list_all_project_artifacts(api, CONFIG)

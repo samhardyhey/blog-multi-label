@@ -10,22 +10,25 @@ from tqdm import tqdm
 
 if __name__ == "__main__":
     CONFIG = yaml.safe_load(
-        (Path(__file__).parents[0] / "scrape_config.yaml").read_bytes())
-    output_dir = (Path(__file__).parents[0] / "output")
+        (Path(__file__).parents[0] / "scrape_config.yaml").read_bytes()
+    )
+    output_dir = Path(__file__).parents[0] / "output"
     shutil.rmtree((str(output_dir))) if output_dir.exists() else None
     output_dir.mkdir(parents=True, exist_ok=True)
 
     pushshift_client = PushshiftAPI()
     last_month_start_epoch = int(
-        (datetime.now() - timedelta(days=CONFIG['day_delta'])).timestamp())
+        (datetime.now() - timedelta(days=CONFIG["day_delta"])).timestamp()
+    )
     reddit_query = ""
     per_subreddit_limit = math.ceil(
-        CONFIG['total_submission_limit'] / len(CONFIG['subreddits']))
+        CONFIG["total_submission_limit"] / len(CONFIG["subreddits"])
+    )
 
     # 1. retrieve submissions
     all_subreddit_submissions = []
     for subreddit in tqdm(
-        CONFIG['subreddits'],
+        CONFIG["subreddits"],
         desc=f"Collecting {per_subreddit_limit} submissions for each subreddit..",
     ):
         submission_raw = list(
@@ -76,15 +79,26 @@ if __name__ == "__main__":
         comments_formatted = pd.DataFrame([e.d_ for e in comments_raw])
 
         submissions_and_comments.append(
-            pd.concat([record.to_frame().transpose(), comments_formatted], sort=True))
+            pd.concat([record.to_frame().transpose(), comments_formatted], sort=True)
+        )
 
     # 3. format/save
     all_submissions_and_comments = (
         pd.concat(submissions_and_comments, sort=True)
-        .assign(document_publish_date=lambda x: x.created.apply(lambda y: datetime.fromtimestamp(y)))
+        .assign(
+            document_publish_date=lambda x: x.created.apply(
+                lambda y: datetime.fromtimestamp(y)
+            )
+        )
         .drop(labels=["created", "created_utc"], axis="columns", inplace=False)
-        .assign(text=lambda x: x.apply(lambda y: y.body if type(y.body) == str else y.title, axis=1))
-        .pipe(lambda x: x[["author", "id", "subreddit", "document_publish_date", "text"]])
+        .assign(
+            text=lambda x: x.apply(
+                lambda y: y.body if type(y.body) == str else y.title, axis=1
+            )
+        )
+        .pipe(
+            lambda x: x[["author", "id", "subreddit", "document_publish_date", "text"]]
+        )
         .pipe(
             lambda x: x[
                 ~x.text.isin(
@@ -98,4 +112,5 @@ if __name__ == "__main__":
         )
     )
     all_submissions_and_comments.to_csv(
-        output_dir / "reddit_aus_finance.csv", index=False)
+        output_dir / "reddit_aus_finance.csv", index=False
+    )

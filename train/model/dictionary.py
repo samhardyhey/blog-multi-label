@@ -23,7 +23,7 @@ def fit_and_log_dictionary_classifier(test_split, CONFIG, model_config):
             label_dictionary=model_config["label_dictionary"],
         )
 
-        # label dictionary as an artefact
+        # label dictionary as an artifact
         (Path(run.dir) / "label_dictionary.json").write_text(
             json.dumps(dc.label_dictionary)
         )

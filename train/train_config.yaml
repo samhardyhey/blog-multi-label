@@ -1,10 +1,10 @@
 # experiment
-dataset: "/root/blog-multi-label/output/annotation_1.csv"
+dataset: "/root/blog-multi-label/output/annotation_2.csv"
 text_col: "text"
 label_col: "label"
-test_size: 0.25
-wandb_project: "tyre_kick"
-wandb_group: "annotation_1"
+test_size: 0.5
+wandb_project: "blog_multi_label"
+wandb_group: "annotation_2"
 wandb_entity: "cool_stonebreaker"
 target_labels: ['workplace','property','tax','insurance','super','inflation','stocks','toxic']
 
@@ -12,20 +12,18 @@ models:
   - type: "dictionary_classifier"
     classifier_type: "multi_label"
     label_dictionary:
-      workplace: ['WFH', 'boss', 'co-workers', 'culture', 'hybrid', 'life balance', 'office']
-      property: ['afford', 'agent', 'auction', 'bedroom', 'boom', 'builder', 'buy', 'defect', 'floor plan', 'house', 'landlord', 'layout', 'loan', 'mortgage', 'property', 'rate', 'real estate', 'refinance', 'rent', 'resident', 'salary', 'townhouse']
-      tax: ['gst', 'land tax', 'salary sacrifice', 'tax']
+      workplace: ['WFH', 'boss', 'co-workers', 'culture', 'hybrid', 'life balance', 'office', 'culture']
+      property: ['suburb', 'area', 'lend', 'report', 'agent', 'auction', 'bedroom', 'boom', 'builder', 'defect', 'floor plan', 'house', 'landlord', 'layout', 'loan', 'mortgage', 'property', 'real estate', 'refinance', 'rent', 'resident', 'townhouse']
+      tax: ['gst', 'land tax', 'salary sacrifice', 'tax', 'franking', 'treaty', 'taxable', 'tax return']
       insurance: ['income protection', 'indemnity', 'insurance']
-      super: ['balance', 'contribution', 'fund', 'pension', 'retire', 'self-funded', 'super', 'after tax']
-      public_institution: ['bond', 'central bank', 'fair work', 'mint', 'rba', 'watch dog']
-      inflation: ['inflation', 'interest rates', 'petrol', 'phillip lowe', 'rba', 'reserve bank']
-      exchange: ['dollar', 'exchange', 'rate']
-      stocks: ['200', 'assets', 'asx', 'buy', 'commsec', 'dip', 'dividends', 'etf', 'high growth', 'indexed', 'invest', 'return', 'securities', 'selfwealth', 'shares', 'stock', 'van guard', 'vdhg', 'wealth']
+      super: ['contribution', 'fund', 'pension', 'retire', 'self-funded', 'super', 'after tax', 'concessional', 'accumulation']
+      inflation: ['inflation', 'interest rates', 'petrol', 'phillip lowe', 'reserve bank', 'cost of living', 'expensive', 'rise', 'rising']
+      stocks: ['200','asx', 'commsec', 'dip', 'dividends', 'etf', 'high growth', 'indexed', 'invest', 'return', 'securities', 'selfwealth', 'shares', 'stock', 'van guard', 'vdhg', 'diversification', 'portfolio']
       toxic: ['bro', 'butt', 'fool', 'fuck', 'laughable', 'lol', 'salty', 'shit', 'tard']
   - type: "sklearn_linear_svc"
   - type: "flair_tars"
     learning_rate: 0.02
     mini_batch_size: 1
-    max_epochs: 1
+    max_epochs: 15
     safe_final_model: False
     label_type: "multi_label_class"

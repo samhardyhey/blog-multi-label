@@ -1,10 +1,10 @@
 import shutil
 from pathlib import Path
 
+import wandb
 import yaml
 from wasabi import msg
 
-import wandb
 from eval_util import list_all_project_artifacts
 
 ANNOTATION_GROUP = "annotation_1"
@@ -12,13 +12,15 @@ ANNOTATION_GROUP = "annotation_1"
 if __name__ == "__main__":
     api = wandb.Api()
     CONFIG = yaml.safe_load(
-        (Path(__file__).parents[0] / "train_config.yaml").read_bytes())
+        (Path(__file__).parents[0] / "train_config.yaml").read_bytes()
+    )
 
     # get run ID's via artifacts
     project_artifacts = list_all_project_artifacts(api, CONFIG)
     output_base_dir = Path(__file__).parents[1] / "deploy/model_files"
-    run_records = project_artifacts.query(
-        "group == @ANNOTATION_GROUP").drop_duplicates("type")
+    run_records = project_artifacts.query("group == @ANNOTATION_GROUP").drop_duplicates(
+        "type"
+    )
 
     for idx, record in run_records.iterrows():
         # save each model's binaries/config

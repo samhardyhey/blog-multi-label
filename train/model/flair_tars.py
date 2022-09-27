@@ -1,12 +1,12 @@
 from pathlib import Path
 
 import pandas as pd
+import wandb
 from flair.data import Corpus, Sentence
 from flair.models import TARSClassifier
 from flair.tokenization import SegtokTokenizer
 from flair.trainers import ModelTrainer
 
-import wandb
 from data_util import log_dataframe
 from eval_util import create_classification_report, create_slim_classification_report
 

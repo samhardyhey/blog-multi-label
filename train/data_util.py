@@ -18,8 +18,9 @@ def label_mat_to_label_dictionary(label_mat):
         label_mat.pipe(lambda x: x[sorted(x.columns)]).to_dict(orient="index").values()
     )
 
+
 def filter_label_object(label_object, target_fields):
-    return {k:v for k,v in label_object.items() if k in target_fields}
+    return {k: v for k, v in label_object.items() if k in target_fields}
 
 
 def create_multi_label_train_test_splits(

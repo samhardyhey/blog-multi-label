@@ -19,3 +19,17 @@ See the accompanying blog post [here](https://www.samhardyhey.com/poor-mans-asr-
 - **Multi-label training.** Given a CSV of annotated submissions/comments, spot-check a selection of models including the original dictionary classifier, an sklearn linear SVC and a flair TARS few-shot classifier. Log model performance/files to WandB. Assumes an active WandB account (`wandb login`). Run via `python train/train_multi_label.py`. Adjust config to suit.
 
 - **Model deployment.** Given a specific annotation round, copy relevant model files into the sub-moduled gradio space repo. Copy via `python train/copy_deploy_model_files.py`, "Deploy" via repo updates.
+
+## HF Space Submodule
+Misc. commands mainly for my benefit:
+
+```
+# add
+git submodule add https://huggingface.co/spaces/samhardyhey/blog-multi-label/ deploy
+
+# update
+git submodule update --init --recursive
+
+# remove
+git submodule deinit
+```

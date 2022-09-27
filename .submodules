@@ -1,3 +1,0 @@
-[submodule "deploy"]
-  path = deploy
-  url = https://huggingface.co/spaces/samhardyhey/blog-multi-label

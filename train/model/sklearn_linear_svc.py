@@ -1,7 +1,6 @@
 from pathlib import Path
 
 import pandas as pd
-import wandb
 from joblib import dump
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.feature_selection import VarianceThreshold
@@ -9,6 +8,7 @@ from sklearn.pipeline import Pipeline
 from sklearn.svm import LinearSVC
 from skmultilearn.problem_transform import BinaryRelevance
 
+import wandb
 from data_util import log_dataframe
 from eval_util import (
     create_classification_report,

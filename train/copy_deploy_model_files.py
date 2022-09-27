@@ -1,13 +1,13 @@
 import shutil
 from pathlib import Path
 
-import wandb
 import yaml
 from wasabi import msg
 
+import wandb
 from eval_util import list_all_project_artifacts
 
-ANNOTATION_GROUP = "annotation_1"
+ANNOTATION_GROUP = "annotation_2"
 
 if __name__ == "__main__":
     api = wandb.Api()

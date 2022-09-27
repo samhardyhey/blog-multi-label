@@ -1,7 +1,8 @@
 import numpy as np
 import pandas as pd
-import wandb
 from skmultilearn.model_selection import iterative_train_test_split
+
+import wandb
 
 
 def label_dictionary_to_label_mat(label_dictionary_list, thresh=0.75):
@@ -24,8 +25,8 @@ def filter_label_object(label_object, target_fields):
 
 
 def create_multi_label_train_test_splits(
-    df: pd.core.frame.DataFrame,
-    label_col: str,
+    df,
+    label_col,
     test_size=0.25,
 ):
     df[label_col] = df[label_col].apply(

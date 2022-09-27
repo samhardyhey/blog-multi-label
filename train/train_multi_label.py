@@ -1,10 +1,10 @@
 from pathlib import Path
 
 import pandas as pd
-import wandb
 import yaml
 from wasabi import msg
 
+import wandb
 from data_util import (
     create_multi_label_train_test_splits,
     filter_label_object,

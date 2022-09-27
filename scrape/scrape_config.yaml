@@ -1,4 +1,3 @@
-# total_submission_limit: 250
-total_submission_limit: 1
+total_submission_limit: 250
 day_delta: 60
 subreddits: ['fiaustralia', 'ASX_Bets', 'ausstocks', 'AusProperty', 'AusFinance', 'ausstocks', 'AusEcon', 'AusPropertyChat', 'ASX', 'AustralianAccounting']

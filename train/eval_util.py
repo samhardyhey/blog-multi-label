@@ -5,9 +5,9 @@ from pathlib import Path
 import pandas as pd
 import plotly.express as px
 import srsly
-import wandb
 from sklearn.metrics import classification_report
 
+import wandb
 from data_util import label_dictionary_to_label_mat
 
 

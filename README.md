@@ -6,7 +6,7 @@ Notebooks and scripts for the:
 - Model spot-checking
 - Model deployment
 
-See the accompanying blog post [here](https://www.samhardyhey.com/poor-mans-asr-pt-1). Additionally, see WandB hosted model evaluation here, and HF Gradio toy-deployment [here](https://huggingface.co/spaces/samhardyhey/blog-multi-label).
+See the accompanying blog post [here](https://www.samhardyhey.com/a-perfectly-cromulent-multi-label-text-classifier). Additionally, see WandB hosted model evaluation [here](https://wandb.ai/cool_stonebreaker/blog_multi_label/reports/Aus-Finance-Multi-label-Classification--VmlldzoyNzAxNTY3?accessToken=187uonhvc0jbzuunvfial7v67bs7jii4ajcbwli17r4idtxp2gztqzjrdh51v0pe), and HF Gradio toy-deployment [here](https://huggingface.co/spaces/samhardyhey/blog-multi-label).
 
 ## Install
 - Conda env creation, python dependencies via `create_env.sh`

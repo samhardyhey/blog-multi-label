@@ -15,6 +15,10 @@ conda install pytorch torchvision torchaudio -c pytorch -y
 echo "Testing torch installation"
 python -c 'import torch; print(torch.cuda.is_available()); print(torch.cuda.device_count())'
 
+echo "Git LFS"
+apt-get update
+apt-get install git-lfs
+
 echo "Add git config"
 git config --global user.name "Sam Hardy"
 git config --global user.email "samhardyhey@gmail.com"

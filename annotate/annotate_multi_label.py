@@ -15,7 +15,7 @@ def binary_confirm_n_label_objects(
     label_object_key,
     accept_value="y",
     reject_value="n",
-    n_examples: int = 10,
+    n_examples=10,
 ):
     # given a list of records, positively verify (binary confirmation) across a selected field until examples run out/quota reached. Return all annotations.
     updated_records = []

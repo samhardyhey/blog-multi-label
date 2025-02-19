@@ -1,14 +1,21 @@
 from pathlib import Path
 
 import pandas as pd
-import wandb
 import yaml
 from wasabi import msg
 
-from data_util import create_multi_label_train_test_splits, log_dataframe
-from eval_util import (list_all_project_artifacts,
-                       log_inter_group_model_comparisons,
-                       log_intra_group_model_comparisons)
+import wandb
+from data_util import (
+    create_multi_label_train_test_splits,
+    filter_label_object,
+    label_dictionary_to_label_mat,
+    log_dataframe,
+)
+from eval_util import (
+    list_all_project_artifacts,
+    log_inter_group_model_comparisons,
+    log_intra_group_model_comparisons,
+)
 from model.dictionary import fit_and_log_dictionary_classifier
 from model.flair_tars import fit_and_log_flair_tars_classifier
 from model.sklearn_linear_svc import fit_and_log_sklearn_linear_svc_classifier
@@ -21,6 +28,14 @@ if __name__ == "__main__":
 
     # 1. create/log splits
     df = pd.read_csv(CONFIG["dataset"])
+    df[CONFIG["label_col"]] = df[CONFIG["label_col"]].apply(
+        lambda x: eval(x) if type(x) == str else x
+    )
+    df[CONFIG["label_col"]] = df[CONFIG["label_col"]].apply(
+        lambda x: filter_label_object(x, CONFIG["target_labels"])
+    )
+    df = df[label_dictionary_to_label_mat(df[CONFIG["label_col"]]).sum(axis=1) > 0]
+
     train_split, test_split = create_multi_label_train_test_splits(
         df, label_col=CONFIG["label_col"], test_size=CONFIG["test_size"]
     )
@@ -31,7 +46,7 @@ if __name__ == "__main__":
         project=CONFIG["wandb_project"],
         name="reddit_aus_finance",
         group=CONFIG["wandb_group"],
-        entity="cool_stonebreaker",
+        entity=CONFIG["wandb_entity"],
     ) as run:
         log_dataframe(run, train_split, "train_split", "Train split")
         log_dataframe(run, dev_split, "dev_split", "Dev split")

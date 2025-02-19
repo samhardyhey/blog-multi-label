@@ -5,8 +5,9 @@ from pathlib import Path
 
 import pandas as pd
 import yaml
-from psaw import PushshiftAPI
 from tqdm import tqdm
+
+from psaw import PushshiftAPI
 
 if __name__ == "__main__":
     CONFIG = yaml.safe_load(

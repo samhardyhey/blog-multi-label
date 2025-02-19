@@ -20,9 +20,13 @@ def label_mat_to_label_dictionary(label_mat):
     )
 
 
+def filter_label_object(label_object, target_fields):
+    return {k: v for k, v in label_object.items() if k in target_fields}
+
+
 def create_multi_label_train_test_splits(
-    df: pd.core.frame.DataFrame,
-    label_col: str,
+    df,
+    label_col,
     test_size=0.25,
 ):
     df[label_col] = df[label_col].apply(

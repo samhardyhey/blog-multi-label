@@ -1,21 +1,47 @@
-## Multi-label
-Notebooks and scripts for the:
+# Multi-Label Text Classification 🏷️
 
-- Collection of [AusFinance](https://www.reddit.com/r/AusFinance/) and adjacent reddit data
-- Multi-label annotation
-- Model spot-checking
-- Model deployment
+Tools for building and evaluating multi-label text classifiers using Reddit data. Companion code for ["A Perfectly Cromulent Multi-Label Text Classifier"](https://www.samhardyhey.com/a-perfectly-cromulent-multi-label-text-classifier).
 
-See the accompanying blog post [here](https://www.samhardyhey.com/poor-mans-asr-pt-1). Additionally, see WandB hosted model evaluation here, and HF Gradio toy-deployment [here](https://huggingface.co/spaces/samhardyhey/blog-multi-label).
+## Features
+- 🤖 Reddit data collection
+- ✍️ Multi-label annotation workflow
+- 📊 Model evaluation & comparison
+- 🚀 Gradio deployment
 
-## Install
-- Conda env creation, python dependencies via `create_env.sh`
+## Setup
+```bash
+# Install dependencies
+./create_env.sh
+```
 
 ## Usage
-- **Reddit scraping.** Given a collection of subreddits, retrieve all submissions and accompanying comments within a `day_delta` period of time. Ceiling defined via `total_submission_limit`. Run via `python scrape/scrape_reddit.py`. Adjust config to suit.
+### 📥 Data Collection
+```bash
+# Scrape Reddit submissions and comments
+python scrape/scrape_reddit.py
+```
 
-- **Multi-label annotation.** Given a CSV of formatted submissions/comments, bootstrap a small multi-label dataset using rule-based dictionaries, thresholding and quota requirements. Annotation script allows for successive annotation rounds to be applied to a single dataset, allowing for flexible label scheme changes (add/remove/redefine). Run via `python annotate/annotate_multi_label.py`. Adjust config to suit.
+### 🏷️ Annotation
+```bash
+# Bootstrap multi-label dataset
+python annotate/annotate_multi_label.py
+```
 
-- **Multi-label training.** Given a CSV of annotated submissions/comments, spot-check a selection of models including the original dictionary classifier, an sklearn linear SVC and a flair TARS few-shot classifier. Log model performance/files to WandB. Assumes an active WandB account (`wandb login`). Run via `python train/train_multi_label.py`. Adjust config to suit.
+### 🔬 Training
+```bash
+# Evaluate models and log to WandB
+wandb login
+python train/train_multi_label.py
+```
 
-- **Model deployment.** Given a specific annotation round, copy relevant model files into the sub-moduled gradio space repo. Copy via `python train/copy_deploy_model_files.py`, "Deploy" via repo updates.
+### 🚀 Deployment
+```bash
+# Copy model files to Gradio space
+python train/copy_deploy_model_files.py
+```
+
+## Resources
+- 📊 [Model Evaluation (WandB)](https://wandb.ai/)
+- 🎮 [Demo (Hugging Face)](https://huggingface.co/spaces/samhardyhey/blog-multi-label)
+
+*Note: Configs can be adjusted for each step to suit your needs.*
